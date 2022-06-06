@@ -8,7 +8,6 @@ export type Item = {
 }
 
 export const fetchReport = async () => {
-  console.log('fetch =>', 'fetched report')
   const data = await axios.get(getApiUrl('/reports'))
   return data.data
 }

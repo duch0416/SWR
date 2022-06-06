@@ -1,6 +1,6 @@
-import { useReport } from "../useReport";
+import { reportKeys, useReport } from "../useReport";
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { Wrapper } from "Wrapper";
+import { queryClient, Wrapper } from "Wrapper";
 import { TablePropsProvider } from "provider/TablePropsProvider";
 import { FC, ReactNode } from "react";
 
@@ -20,7 +20,7 @@ describe("useReport(:reportName)", () => {
       wrapper: HigherWrapper,
     });
 
-    await waitFor(() => expect(result.current.isLoading).toEqual(false));
+    await waitFor(() => expect(result.current.isSuccess).toEqual(true));
 
     expect(result.current.data).toBeDefined();
   });
@@ -30,18 +30,19 @@ describe("useReport(:reportName)", () => {
       wrapper: HigherWrapper,
     });
 
-    await waitFor(() => expect(result.current.isLoading).toEqual(false));
+    await waitFor(() => expect(result.current.isSuccess).toEqual(true));
 
     expect(result.current.data).toBeDefined();
 
     act(() => {
-      result.current.refetch()
-    })
+      queryClient.invalidateQueries(reportKeys.report('test'))
+    });
 
-    console.log(result.current)
-    // await waitFor(() => expect(result.current.isFetching).toEqual(true));
-    // await waitFor(() => expect(result.current.isFetching).toEqual(false));
+    await waitFor(() => result.current.isStale)
 
-    // expect(result.current.data).toBeDefined();
+    await waitFor(() => result.current.isFetching);
+    await waitFor(() => !result.current.isFetching);
+
+    expect(result.current.data).toBeDefined();
   });
 });
