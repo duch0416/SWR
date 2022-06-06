@@ -5,10 +5,9 @@ import { TablePropsProvider } from "../provider/TablePropsProvider";
 const Home: NextPage = () => {
   return (
     <TablePropsProvider>
-      hello
-      {/* <div style={{ width: '100%', display: 'flex', justifyContent: 'center'}}>
+      <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
         <SomeTable />
-      </div> */}
+      </div>
     </TablePropsProvider>
   );
 };
