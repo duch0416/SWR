@@ -9,8 +9,8 @@ export type Item = {
 
 export const fetchReport = async () => {
   console.log('fetch =>', 'fetched report')
-
-  return await (await axios.get(getApiUrl('/reports'))).data
+  const data = await axios.get(getApiUrl('/reports'))
+  return data.data
 }
 
 export const addReportItem = async (reportName: string, payload: AddReportItemPayload) => {

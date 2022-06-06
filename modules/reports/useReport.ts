@@ -20,7 +20,7 @@ export const useReport = (reportName: ReportName) => {
     select: (res) => res.data
   })
 
-  return  {
+  return {
     ...query,
   }
 } 
