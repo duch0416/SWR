@@ -12,5 +12,6 @@ const mutation = async (key: ReportKeys, {arg}: {arg: RemoveReportItemPayload}) 
 }
 
 export const useRemoveReportItem = ({keys}: MutationParams<ReportKeys>) => {
+  // Q: Maybe we should consider adding separate key for mutation and invalidate queries onMutation success ?
   return useSWRMutation(getReportKeys(keys), mutation)
 }
