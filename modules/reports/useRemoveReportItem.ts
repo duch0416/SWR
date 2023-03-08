@@ -1,28 +1,16 @@
-import { useMutation, useQueryClient } from "react-query"
-import { AddReportItemPayload, removeReportItem } from "@api"
-import { reportKeys } from "./useReport"
 
-export const useRemoveReportItem = (reportName: string) => {
-  const queryClient = useQueryClient()
 
-  const mutation = useMutation((item: AddReportItemPayload) => removeReportItem(reportName, item), {
-    onError: (err) => {
-      // show some toast with error
-      console.log('error')
-    },
-    onSuccess: (res) => {
-      // show some toast with success message
-      queryClient.invalidateQueries(reportKeys.report(reportName))
-      console.log('mutation =>', 'successfully removed item')
-    }
-  })
+import { removeReportItem, RemoveReportItemPayload } from "@api"
+import useSWRMutation from 'swr/mutation'
 
-  const removeItem = (item: AddReportItemPayload) => {
-    mutation.mutate(item)
-  }
+import { ReportKeys } from "./reports.types"
+import {MutationParams} from '../types'
+import { getReportKeys } from "./useReport"
 
-  return {
-    ...mutation,
-    removeItem,
-  }
+const mutation = async (key: ReportKeys, {arg}: {arg: RemoveReportItemPayload}) => {
+  return await removeReportItem(arg)
+}
+
+export const useRemoveReportItem = ({keys}: MutationParams<ReportKeys>) => {
+  return useSWRMutation(getReportKeys(keys), mutation)
 }

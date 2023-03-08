@@ -2,40 +2,25 @@ import { useState, ReactNode, createContext, FC } from "react";
 
 interface TableProviderProps {
   children: ReactNode;
-  initFilters?: Filters;
+  reportId: string;
 }
 
 type UpdatePageType = (page: number) => void;
-type UpdateFilterType = (filterPayload: FilterPayload) => void;
 type UpdateSearchType = (search: string) => void;
-
-type FilterValue = string | number;
-
-type Filters = {
-  [name: string]: FilterValue;
-};
-
-type FilterPayload = {
-  name: string;
-  value: FilterValue;
-};
 
 interface TableProps {
   page: number;
   search: string;
-  filters: {
-    [name: string]: FilterValue;
-  };
 }
 
 interface TablePropsContextType {
   tableProps: TableProps;
   updatePage: UpdatePageType;
-  updateFilter: UpdateFilterType;
   updateSearch: UpdateSearchType;
+  reportId: string;
 }
 
-const initState: Omit<TableProps, "filters"> = {
+const initState: TableProps = {
   page: 1,
   search: "",
 };
@@ -44,11 +29,10 @@ export const TablePropsContext = createContext({} as TablePropsContextType);
 
 export const TablePropsProvider: FC<TableProviderProps> = ({
   children,
-  initFilters = {},
+  reportId,
 }) => {
   const [tableProps, setTableProps] = useState<TableProps>({
     ...initState,
-    filters: initFilters,
   });
 
   const updatePage: UpdatePageType = (page) => {
@@ -65,19 +49,9 @@ export const TablePropsProvider: FC<TableProviderProps> = ({
     });
   };
 
-  const updateFilter: UpdateFilterType = ({ name, value }) => {
-    setTableProps({
-      ...tableProps,
-      filters: {
-        ...tableProps.filters,
-        [name]: value,
-      },
-    });
-  };
-
   return (
     <TablePropsContext.Provider
-      value={{ tableProps, updatePage, updateFilter, updateSearch }}
+      value={{ tableProps, updatePage, updateSearch, reportId }}
     >
       {children}
     </TablePropsContext.Provider>

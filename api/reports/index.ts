@@ -7,17 +7,24 @@ export type Item = {
   id: string;
 }
 
-export const fetchReport = async () => {
-  const data = await axios.get(getApiUrl('/reports'))
-  return data.data
+type FetchReportParams = {
+  reportId: string;
+  page?: number;
+  search?: string;
 }
 
-export const addReportItem = async (reportName: string, payload: AddReportItemPayload) => {
+export const fetchReport = async (params: FetchReportParams):  Promise<Item[]> => {
+  const res = await axios.get(getApiUrl('/reports'), {params})
 
-  return await axios.post(getApiUrl(`/reports`), payload)
+  return res?.data?.data
 }
 
-export const removeReportItem = async (reportName: string, payload: AddReportItemPayload) => {
+export const addReportItem = async (payload: AddReportItemPayload): Promise<Item> => {
+  const res = await axios.post(getApiUrl(`/reports/${payload.reportId}`), payload)
+  return res.data
+}
 
-  return await axios.delete(getApiUrl(`/reports/${payload.id}`))
+export const removeReportItem = async (payload: AddReportItemPayload): Promise<Item> => {
+  const removedItem = await axios.delete(getApiUrl(`/reports/${payload.reportId}`), {data: payload})
+  return removedItem.data
 }

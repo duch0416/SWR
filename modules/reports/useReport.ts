@@ -1,26 +1,15 @@
-import { useQuery } from "react-query"
+import useSwr from 'swr'
 
-import { fetchReport } from "@api"
-import { useTableProps } from "../../hooks/useTableProps"
+import { fetchReport, Item } from "@api"
+import { QueryParams } from '../types'
+import { ReportKeys } from './reports.types'
 
-type ReportName = string
+export const reportQueryKey = 'report' as const
 
-export const reportKeys = {
-  report: (reportName: ReportName) => [`report-${reportName}`]
+export type ReportQueryKey = typeof reportQueryKey;
+
+export const getReportKeys = (keys?: Partial<ReportKeys>): ReportKeys => ({ queryKey: reportQueryKey, ...keys } as ReportKeys)
+
+export const useReport = ({ keys, options }: QueryParams<ReportKeys>) => {
+  return useSwr(getReportKeys(keys), async () => await fetchReport(keys), options)
 }
-
-export const useReport = (reportName: ReportName) => {
-  const { tableProps } = useTableProps()
-
-  const queryKey = reportKeys.report(reportName)[0]
-
-  const query = useQuery({
-    queryKey: [queryKey, tableProps],
-    queryFn: fetchReport,
-    select: (res) => res.data
-  })
-
-  return {
-    ...query,
-  }
-} 

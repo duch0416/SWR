@@ -4,7 +4,7 @@ import { TablePropsProvider } from "../provider/TablePropsProvider";
 
 const Home: NextPage = () => {
   return (
-    <TablePropsProvider>
+    <TablePropsProvider reportId="2">
       <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
         <SomeTable />
       </div>

@@ -1,28 +1,14 @@
-import { useMutation, useQueryClient } from "react-query"
 import { addReportItem, AddReportItemPayload } from "@api"
-import { reportKeys } from "./useReport"
+import useSWRMutation from 'swr/mutation'
 
-export const useAddReportItem = (reportName: string) => {
-  const queryClient = useQueryClient()
+import { ReportKeys } from "./reports.types"
+import {MutationParams} from '../types'
+import { getReportKeys } from "./useReport"
 
-  const mutation = useMutation((item: AddReportItemPayload) => addReportItem(reportName, item), {
-    onError: (err) => {
-      // show some toast with error
-      console.log('error')
-    },
-    onSuccess: (res) => {
-      // show some toast with success message
-      queryClient.invalidateQueries(reportKeys.report(reportName))
-      console.log('mutation =>', 'successfully added item')
-    }
-  })
+const mutation = async (key: ReportKeys, {arg}: {arg: AddReportItemPayload}) => {
+  return await addReportItem(arg)
+}
 
-  const addItem = (item: AddReportItemPayload) => {
-    mutation.mutate(item)
-  }
-
-  return {
-    ...mutation,
-    addItem,
-  }
+export const useAddReportItem = ({keys}: MutationParams<ReportKeys>) => {
+  return useSWRMutation(getReportKeys(keys) as ReportKeys, mutation)
 }
